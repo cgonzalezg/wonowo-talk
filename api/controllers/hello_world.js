@@ -40,27 +40,56 @@ module.exports = {
 	createTransUrl
 };
 
+const ErrorDestination = 1;
 
 function getBookingTime(duration) {
-	return duration.reduce((p, c) => {
-		return p + c.normalized.value;
-	}, 0);
+	console.log(duration);
+	if (!duration) {
+		// 4 days in seconds
+		return 345600;
+	} else
+		return duration.reduce((p, c) => {
+			return p + c.normalized.value;
+		}, 0);
 }
 
 function getLocation(location) {
+	if (!location) {
+		let err = new Error();
+		err.type = ErrorDestination;
+		throw err;
+	}
 	return location.reduce((p, c) => {
 		return c.value;
 	}, '');
 }
 
 function getInitDate(dateTime) {
-	const date = dateTime.reduce((p, c) => {
-		return c.value;
-	}, '');
-	return moment(date).format('DD-MM-YYYY');
+	if (!dateTime) return moment().add(4, 'd').format('DD-MM-YYYY');
+	let response = {};
+	switch (dateTime[0].type) {
+		case 'value':
+			const date = dateTime.reduce((p, c) => {
+				return c.value;
+			}, '');
+			response = moment(date).format('DD-MM-YYYY');
+			break;
+		case 'interval':
+			response = dateTime[0].values.map((item) => {
+				return {
+					initDate: moment(item.from.value).format('DD-MM-YYYY'),
+					endDate: moment(item.to.value).format('DD-MM-YYYY')
+				};
+			});
+			break;
+		default:
+			response = moment().add(4, 'd').format('DD-MM-YYYY');
+	}
+	return response;
 }
 
 function getGuests(contact) {
+	if (!contact) return 1;
 	return contact.length + 1;
 }
 
@@ -89,15 +118,34 @@ function mapWitResponse(initCity, witData) {
 	const time = getBookingTime(witData.entities.duration);
 	const endCity = getLocation(witData.entities.location);
 	const initDate = getInitDate(witData.entities.datetime);
+	console.log('asdasd', initDate);
 	const guests = getGuests(witData.entities.contact);
-	const endDate = getEndDate(initDate, time);
-	const accUrl = createAccUrl(initCity, initDate, endDate, guests);
-	const transportUrl = createTransUrl(initCity, endCity, initDate);
-	return {
-		accUrl,
-		transportUrl
-	};
-
+	let response = [];
+	if (Array.isArray(initDate)) {
+		console.log('is an array');
+		response = initDate.map((item) => {
+			console.log('assadsad', item);
+			console.log(item.initDate, item.endDate);
+			const accUrl = createAccUrl(initCity, item.initDate, item.endDate, guests);
+			const transportUrl = createTransUrl(initCity, endCity, item.initDate);
+			return {
+				accUrl,
+				transportUrl,
+				date: item.initDate
+			};
+		});
+	} else {
+		console.log('NOT ARRAY');
+		const endDate = getEndDate(initDate, time);
+		const accUrl = createAccUrl(initCity, initDate, endDate, guests);
+		const transportUrl = createTransUrl(initCity, endCity, initDate);
+		response = [{
+			accUrl,
+			transportUrl,
+			date: initDate
+		}];
+	}
+	return response;
 }
 
 /*
@@ -108,21 +156,33 @@ function mapWitResponse(initCity, witData) {
  */
 function recomendations(req, res) {
 	const text = req.body.text;
+	const initCity = req.body.initCity;
+	let response = {};
 	client.message(text, {})
 		.then((data) => {
-			console.log('Yay, got Wit.ai response: ' + JSON.stringify(data));
-		})
-		.catch(console.error);
+			const personas = getGuests(data.entities.contact);
+			const dates = mapWitResponse(initCity, data);
+			const destination = getLocation(data.entities.location);
+			response = {
+				personas,
+				dates,
+				destination
+			};
+			console.log('dates', response);
+			res.json(response);
+		}).catch((err) => {
+			console.log('polla', err);
+			res.status = 400;
+			response = {
+				msg: 'we could find a destination'
+			};
+			res.json(response);
+		});
+	// .catch(console.error);
+
 	console.log('hello world');
 
 
 	// this sends back a JSON response which is a single string
-	res.json({
-		'personas': 5,
-		'dates': {
-			'accURl': 'http://accomodation?asdfasdf',
-			'transportUrl': 'http://transponr?asdfasdf',
-			'date': '2016-11-27T11:40:25.677Z'
-		}
-	});
+
 }

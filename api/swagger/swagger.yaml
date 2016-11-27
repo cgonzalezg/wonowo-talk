@@ -33,13 +33,18 @@ paths:
                 type: string
               timezone:
                 type: string
+              initCity:
+                type: string
             required:
               - text
+              - initCity
+              - date
             example:
               text: ad laboris exercitation sit i
               locale: Excepteur minim labore
               date: '2016-11-27T11:40:25.677Z'
               timezone: Europe/Zurich
+              initCity: Madrid
       responses:
         '200':
           description: ''
@@ -48,8 +53,12 @@ paths:
             properties:
               personas:
                 type: number
+              destination:
+                type: string
               dates:
-                $ref: '#/definitions/date'
+                type: array
+                items:
+                  $ref: '#/definitions/date'
         '404':
           description: ''
           schema:
