@@ -1,0 +1,76 @@
+swagger: '2.0'
+info:
+  version: '0'
+  title: wonowo-talk
+  description: API booking holidays with nlp intagration
+host: localhost:3000
+basePath: /api/v0
+schemes:
+  - http
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /recomendations:
+    x-swagger-router-controller: hello_world
+    post:
+      operationId: POST_recomendations
+      summary: recomendations
+      tags:
+        - nlp
+      parameters:
+        - name: body
+          in: body
+          schema:
+            type: object
+            properties:
+              text:
+                type: string
+              locale:
+                type: string
+              date:
+                type: string
+              timezone:
+                type: string
+            required:
+              - text
+            example:
+              text: ad laboris exercitation sit i
+              locale: Excepteur minim labore
+              date: '2016-11-27T11:40:25.677Z'
+              timezone: Europe/Zurich
+      responses:
+        '200':
+          description: ''
+          schema:
+            type: object
+            properties:
+              personas:
+                type: number
+              dates:
+                $ref: '#/definitions/date'
+        '404':
+          description: ''
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+        '500':
+          description: ''
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+definitions:
+  date:
+    type: object
+    properties:
+      accURl:
+        type: string
+      transportUrl:
+        type: string
+      date:
+        type: string
