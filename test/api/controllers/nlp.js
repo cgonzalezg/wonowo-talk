@@ -2,7 +2,7 @@ var should = require('should');
 // var request = require('supertest');
 // var server = require('../../../app');
 const WitResponse = require('../helpers/witHelper');
-const controller = require('../../../api/controllers/hello_world');
+const controller = require('../../../api/controllers/nlp');
 describe('controllers', function() {
 	describe('recomendations', function() {
 		describe('map the wit response ', () => {

@@ -3,7 +3,7 @@ info:
   version: '0'
   title: wonowo-talk
   description: API booking holidays with nlp intagration
-host: localhost:3000
+host: localhost:5000
 basePath: /api/v0
 schemes:
   - http
@@ -13,7 +13,7 @@ produces:
   - application/json
 paths:
   /recomendations:
-    x-swagger-router-controller: hello_world
+    x-swagger-router-controller: nlp
     post:
       operationId: POST_recomendations
       summary: recomendations
@@ -40,8 +40,8 @@ paths:
               - initCity
               - date
             example:
-              text: ad laboris exercitation sit i
-              locale: Excepteur minim labore
+              text: ir de vacaciones con Claudia a Barcelona
+              locale: en-US
               date: '2016-11-27T11:40:25.677Z'
               timezone: Europe/Zurich
               initCity: Madrid
