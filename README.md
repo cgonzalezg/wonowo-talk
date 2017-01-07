@@ -31,9 +31,20 @@ Right now only works with English sentence because WIT and Spanish does not unde
 ```
 
 ## Run it
+install dependencies
+
 `$ npm install `
 
+install swagger for development  
+
+`$ npm install --save swagger`
+
+
+run development mode
+
 `$ WIT_CLIENT_KEY={your wit server key} project start`
+
+
 
 ## Test it
 
