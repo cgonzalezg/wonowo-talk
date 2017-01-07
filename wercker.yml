@@ -12,6 +12,10 @@ dev:
 build:
   steps:
     - npm-install
+    - script:
+      name: install swagger
+      code: |
+          npm install -g swagger
     - npm-test
 deploy:
   steps:
