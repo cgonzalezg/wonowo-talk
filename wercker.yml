@@ -1,0 +1,44 @@
+box:
+  id: node
+dev:
+  steps:
+    # - script:
+    #     name: show env var
+    #     code: echo $MONGO_ENV_MONGO_MAJOR
+    - npm-install
+    - internal/watch:
+        code: node .
+        reload: true
+build:
+  steps:
+    - npm-install
+    - npm-test
+deploy:
+  steps:
+    - add-to-known_hosts:
+        hostname: $SERVER_HOSTNAME
+    - add-ssh-key:
+        keyname: DOKKU
+    - script:
+        name: Initialize new repository
+        code: |
+            rm -rf .git/
+            rm -rf docs/
+            git init
+            git config --global user.name "cgonzalez"
+            git config --global user.email "cesargonz1984@gmail.com"
+            git remote add dokku dokku@$SERVER_HOSTNAME:talk
+    - script:
+        name: Add everything to the repository
+        code: |
+          git add .
+          git commit -m "Result of deploy $WERCKER_GIT_COMMIT"
+    - script:
+        name: Push to dokku
+        code: |
+          git push dokku master -f
+  after-steps:
+    - slack-notifier:
+        url: https://hooks.slack.com/services/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
+        channel: general
+        username: deploy-talk
