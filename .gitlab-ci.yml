@@ -27,7 +27,7 @@ test:
   stage: test
   script:
     - docker pull "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
-    - docker run "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME" npm test
+    - docker run "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME" swagger project test
 release-image:
   stage: release
   script:
