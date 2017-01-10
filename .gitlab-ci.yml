@@ -17,6 +17,10 @@ services:
 
 before_script:
   - docker login -u "gitlab-ci-token" -p "$CI_BUILD_TOKEN" $CI_REGISTRY
+  - mkdir -p ~/.ssh
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - ssh-keyscan -H '<yourdokkuinstance>' >> ~/.ssh/known_hosts
 
 build:
   stage: build
@@ -36,3 +40,12 @@ release-image:
     - docker push $CONTAINER_RELEASE_IMAGE
   only:
     - master
+deploy_staging:
+  stage: deploy
+  script:
+    - git push dokku@$LEMUR:talk master
+  environment:
+    name: lemur
+    url: http://talk.dokku.lemur
+  only:
+  - master
