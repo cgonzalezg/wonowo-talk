@@ -3,7 +3,7 @@
 image: docker:latest
 
 services:
-  - docker:dind
+  - gitlab/dind
 
 build:
   stage: build
