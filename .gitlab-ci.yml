@@ -16,6 +16,4 @@ test:
   stage: test
   script:
     - docker run "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME" npm test
-push:
-  script:
     - docker push "$CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME"
