@@ -24,6 +24,6 @@
   },
   "scripts": {
     "start": "node app.js",
-    "test": "swagger project test"
+    "test": "WIT_CLIENT_KEY=test swagger project test"
   }
 }
