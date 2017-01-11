@@ -53,10 +53,11 @@ describe('controllers', function() {
 			it('the hole object', (done) => {
 				const accExpectatonUrl = `http://www.wonowo.net/api/Accomodations/getAccomodation?loc=${initCity}&fecha_inicio=${initDate}&fecha_final=${endDate}&huespedes=${guests}`;
 				const transExpectationUrl = `http://www.wonowo.net/api/TransportTickets/getTransport?loc_origen=${initCity}&loc_destino=${endCity}&fecha=${initDate}`;
-				const expectations = {
+				const expectations = [{
 					accUrl: accExpectatonUrl,
+					date: '01-12-2016',
 					transportUrl: transExpectationUrl,
-				};
+				}];
 				const sut = controller.mapWitResponse(initCity, WitResponse);
 				// should.exist(sut);
 				sut.should.deepEqual(expectations);
