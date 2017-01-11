@@ -43,9 +43,11 @@ release-image:
 deploy_staging:
   stage: deploy
   script:
-    - git push dokku@$LEMUR:talk master
+    - mkdir deploy
+    - echo "FROM $CONTAINER_TEST_IMAGE" > deploy/Dockerfile
+    - cd deploy && git init && git add . && git commit -m && git push dokku@$LEMUR:talk master
   environment:
     name: lemur
     url: http://talk.dokku.lemur
   only:
-  - master
+  - develop
